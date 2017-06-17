@@ -4,12 +4,12 @@ import numpy as np
 class Read(object):
 
     def __init__(self,filesPath):
-        self.trainPath=filesPath+"/train.csv"
-        self.structurePath=filesPath+"/structure.txt"
-        self.testPath=filesPath+"/test.csv"
+        self.__trainPath=filesPath+"/train.csv"
+        self.__structurePath=filesPath+"/structure.txt"
+        self.__testPath=filesPath+"/test.csv"
 
     def readStructure(self):
-        structure_file = open(self.structurePath, "r")
+        structure_file = open(self.__structurePath, "r")
         raw = structure_file.read()
         structure_file.close()
         structure_lines = raw.split('\n')
@@ -24,11 +24,11 @@ class Read(object):
         return structure
 
     def readTrain(self):
-        trainData = pd.read_csv(self.trainPath)
+        trainData = pd.read_csv(self.__trainPath)
         return trainData
 
     def readTest(self):
-        testData = pd.read_csv(self.testPath)
+        testData = pd.read_csv(self.__testPath)
         return testData
 
 

@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>f219854f-e553-4c87-840a-8e99f86cd095</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>GUI.py</StartupFile>
+    <StartupFile>Ass4.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

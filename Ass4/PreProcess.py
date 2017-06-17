@@ -4,26 +4,26 @@ import matplotlib as pt
 
 class PreProcess(object):
     def __init__(self,structure,train):
-        self.structure=structure
-        self.train=train
+        self.__structure=structure
+        self.__train=train
 
     def fillNA(self):
         print("Befor#################################################################################")
-        print(self.train)
-        for column in self.structure.keys():
-            if (self.structure[column]=='NUMERIC'):
-                self.train[column].fillna(self.train[column].mean(), inplace=True)
+        print(self.__train)
+        for column in self.__structure.keys():
+            if (self.__structure[column]=='NUMERIC'):
+                self.__train[column].fillna(self.__train[column].mean(), inplace=True)
             else:
-                self.train[column].fillna((self.train[column]).mode().iloc[0], inplace=True)
+                self.__train[column].fillna((self.__train[column]).mode().iloc[0], inplace=True)
         print("after #################################################################################")
-        print(self.train)
+        print(self.__train)
 
     def discretize(self,numOfBins):
-        for column in self.structure.keys():
-            if (self.structure[column]=='NUMERIC'):
-                self.train[column]=binning(self.train[column],numOfBins)
+        for column in self.__structure.keys():
+            if (self.__structure[column]=='NUMERIC'):
+                self.__train[column]=binning(self.__train[column],numOfBins)
 
-    def binning(col,numOfBins):
+    def __binning(col,numOfBins):
         # Define min and max values:
         minval = col.min()
         maxval = col.max()        
