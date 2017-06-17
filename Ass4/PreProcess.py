@@ -3,27 +3,27 @@ import numpy as np
 import matplotlib as pt
 
 class PreProcess(object):
-    def __init__(self,structure,train):
+
+    def __init__(self,structure):
         self.__structure=structure
-        self.__train=train
-
-    def fillNA(self):
-        print("Befor#################################################################################")
-        print(self.__train)
+    
+    # fill the given train data with missing valuse 
+    def fillNA(self,train):
         for column in self.__structure.keys():
             if (self.__structure[column]=='NUMERIC'):
-                self.__train[column].fillna(self.__train[column].mean(), inplace=True)
+                train[column].fillna(train[column].mean(), inplace=True)
             else:
-                self.__train[column].fillna((self.__train[column]).mode().iloc[0], inplace=True)
-        print("after #################################################################################")
-        print(self.__train)
+                train[column].fillna((train[column]).mode().iloc[0], inplace=True)
+        return train
 
-    def discretize(self,numOfBins):
+    # discretize a given data to given number of bins
+    def discretize(self,numOfBins,data):
         for column in self.__structure.keys():
             if (self.__structure[column]=='NUMERIC'):
-                self.__train[column]=binning(self.__train[column],numOfBins)
+                data[column]=self.__binning(data[column],column,numOfBins)
+        return data
 
-    def __binning(col,numOfBins):
+    def __binning(self,col,colName,numOfBins):
         # Define min and max values:
         minval = col.min()
         maxval = col.max()        
@@ -39,8 +39,15 @@ class PreProcess(object):
         # use default labels 0 ... (n-1)
         labels = range(numOfBins)
 
+        # update structure
+        self.__structure[colName]=labels
+
         # Binning using cut function of pandas
         colBin = pd.cut(col, bin=break_points, labels=labels, include_lowest=True)
 
         return colBin
+
+    # returns the updated structure
+    def getStructure(self):
+        return self.__structure
            
