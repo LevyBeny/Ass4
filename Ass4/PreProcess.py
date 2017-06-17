@@ -15,7 +15,7 @@ class PreProcess(object):
                 self.__train[column].fillna(self.__train[column].mean(), inplace=True)
             else:
                 self.__train[column].fillna((self.__train[column]).mode().iloc[0], inplace=True)
-        print("after #################################################################################")
+        #print("after #################################################################################")
         print(self.__train)
 
     def discretize(self,numOfBins):
@@ -43,4 +43,6 @@ class PreProcess(object):
         colBin = pd.cut(col, bin=break_points, labels=labels, include_lowest=True)
 
         return colBin
+
+
            

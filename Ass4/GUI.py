@@ -3,7 +3,7 @@ import tkFileDialog as filedialog
 import tkMessageBox as mb
 import os
 import os.path
-##from PIL import Image, ImageTk
+from PIL import Image, ImageTk
 import Read
 import PreProcess
 
