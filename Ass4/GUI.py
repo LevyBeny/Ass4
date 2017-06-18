@@ -87,7 +87,7 @@ class GUI(object):
         # pre process
         self.__preProcess=PreProcess.PreProcess(structure)
         train=self.__preProcess.fillNA(train)
-        train=self.__preProcess.discretize(bins,train)
+        train=self.__preProcess.discretizeTrain(bins,train)
 
         # update structure after pre process
         structure=self.__preProcess.getStructure()

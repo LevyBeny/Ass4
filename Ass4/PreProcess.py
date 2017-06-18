@@ -6,6 +6,8 @@ class PreProcess(object):
 
     def __init__(self,structure):
         self.__structure=structure
+        self.__breakPoints=dict()
+        self.__numOfBins=0
     
     # fill the given train data with missing valuse 
     def fillNA(self,train):
@@ -16,14 +18,23 @@ class PreProcess(object):
                 train[column].fillna((train[column]).mode().iloc[0], inplace=True)
         return train
 
-    # discretize a given data to given number of bins
-    def discretize(self,numOfBins,data):
+    # discretize the given train set to given number of bins
+    def discretizeTrain(self,numOfBins,train):
+        self.__numOfBins=numOfBins
         for column in self.__structure.keys():
             if (self.__structure[column]=='NUMERIC'):
-                data[column]=self.__binning(data[column],column,numOfBins)
-        return data
+                self.__breakPoints[column]=self.__createBreakPoints(train[column],numOfBins)
+                self.__structure[colName]=range(numOfBins)# update structure
+                train[column]=self.__binning(train[column],self.__breakPoints[column],numOfBins)
+        return train
 
-    def __binning(self,col,colName,numOfBins):
+    # discretize the given test set to given number of bins
+    def discretizeTest(self,test):
+        for column in self.__breakPoints.keys():
+            test[column]=self.__binning(test[column],self.__breakPoints[column],self.__numOfBins)
+        return test
+
+    def __createBreakPoints(self,col,numOfBins):
         # Define min and max values:
         minval = col.min()
         maxval = col.max()        
@@ -35,12 +46,12 @@ class PreProcess(object):
         for j in range(numOfBins+1):
             break_points.append(i)
             i+=interval_size
+        return break_points
+
+    def __binning(self,col,break_points,numOfBins):
 
         # use default labels 0 ... (n-1)
         labels = range(numOfBins)
-
-        # update structure
-        self.__structure[colName]=labels
 
         # Binning using cut function of pandas
         colBin = pd.cut(col, bin=break_points, labels=labels, include_lowest=True)
