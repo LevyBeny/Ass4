@@ -16,7 +16,7 @@ class Read(object):
         structure = dict()
         for line in structure_lines:
             line_parts=line.split(' ')
-            if(line_parts[1]=='NUMERIC'):
+            if(line_parts[2]=='NUMERIC'):
                 structure[line_parts[1]]=line_parts[2]
             else:
                 values=line_parts[2].strip('{}').split(',')

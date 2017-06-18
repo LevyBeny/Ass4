@@ -61,4 +61,6 @@ class PreProcess(object):
     # returns the updated structure
     def getStructure(self):
         return self.__structure
+
+
            

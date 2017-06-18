@@ -6,6 +6,8 @@ import os.path
 from PIL import Image, ImageTk
 import Read
 import PreProcess
+import Classifier
+
 
 class GUI(object):
 
@@ -49,6 +51,9 @@ class GUI(object):
         self.__classifier=None # contains the classifier 
         self.__preProcess=None # contains the preProcess object
         self.__read=None # contains the read object
+        self.structure=None
+        self.train=None
+        self.__DictsDB=None
 
     # command for browser button
     def __openBrowser(self):
@@ -63,10 +68,15 @@ class GUI(object):
 
     # command for classify button
     def __classifyClick(self):
-        if (classifier==None):
+        if (self.__preProcess==None):
             error="Make Sure To Build A Classifier Before Pressing The Classify Button!"
             mb.showinfo('Path Error',error)
             return
+        else:
+            test = self.__preProcess.discretizeTest(self.__read.readTest())
+            self.__classifier.classifyTestFile(test)
+
+
 
     # start buliding the classifier
     def __beginBuild(self,path,bins):
@@ -81,7 +91,7 @@ class GUI(object):
             mb.showinfo('Bins Error',error)
             self.__read=None
             self.__preProcess=None
-            return;
+            return
 
 
         # pre process
@@ -91,6 +101,11 @@ class GUI(object):
 
         # update structure after pre process
         structure=self.__preProcess.getStructure()
+
+        #create and update classifier
+        self.__classifier=Classifier.Classifier()
+        self.__classifier.setApriorProbability(train,structure)
+        self.__classifier.calcM_EstimatorProbability(train,structure,2)
 
         
 
@@ -157,6 +172,8 @@ class GUI(object):
                 error+="structure.txt not exist!\n"
             mb.showinfo('Files Error',error)
             return False
+
+
 
     # starts the GUI
     def start(self):
