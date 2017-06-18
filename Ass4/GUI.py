@@ -75,6 +75,14 @@ class GUI(object):
         self.__read=Read.Read(path)
         structure=self.__read.readStructure()
         train=self.__read.readTrain()
+        
+        if (len(train.index)<bins):
+            error="Make Sure The Number Of Bins Is Smaller Then The Size Of The Train Set!"
+            mb.showinfo('Bins Error',error)
+            self.__read=None
+            self.__preProcess=None
+            return;
+
 
         # pre process
         self.__preProcess=PreProcess.PreProcess(structure)
