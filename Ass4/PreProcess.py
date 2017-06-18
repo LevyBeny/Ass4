@@ -38,7 +38,7 @@ class PreProcess(object):
         # Define min and max values:
         minval = col.min()
         maxval = col.max()        
-        interval_size=(maxval-minval)/numOfBins
+        interval_size=float(maxval-minval)/float(numOfBins)
 
         # Create list of break points
         break_points=[]
