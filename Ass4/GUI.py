@@ -64,17 +64,35 @@ class GUI(object):
     # command for classify button
     def __classifyClick(self):
         if (classifier==None):
-            error="Make Sure Build A Classifier Before Pressing The Classify Button!"
+            error="Make Sure To Build A Classifier Before Pressing The Classify Button!"
             mb.showinfo('Path Error',error)
+            return
 
     # start buliding the classifier
     def __beginBuild(self,path,bins):
+
+        # read the train
         self.__read=Read.Read(path)
         structure=self.__read.readStructure()
         train=self.__read.readTrain()
-        self.__preProcess=PreProcess.PreProcess(structure,train)
-        self.__preProcess.fillNA()
-        self.__classifier
+        
+        if (len(train.index)<bins):
+            error="Make Sure The Number Of Bins Is Smaller Then The Size Of The Train Set!"
+            mb.showinfo('Bins Error',error)
+            self.__read=None
+            self.__preProcess=None
+            return;
+
+
+        # pre process
+        self.__preProcess=PreProcess.PreProcess(structure)
+        train=self.__preProcess.fillNA(train)
+        train=self.__preProcess.discretizeTrain(bins,train)
+
+        # update structure after pre process
+        structure=self.__preProcess.getStructure()
+
+        
 
     # check if the given variable is an integer
     def __isInt(self,s):
