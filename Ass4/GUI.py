@@ -21,6 +21,8 @@ class GUI(object):
         self.__myvar=Label(self.__app,image = self.__tkimage)
         self.__myvar.place(x=-140, y=60, relwidth=1, relheight=1)
 
+        self.__app.protocol("WM_DELETE_WINDOW", self.__on_closing)
+
         ## Spacing - Row Zero
         self.__app.grid_rowconfigure(0, minsize=70)
         Label(self.__app,text="Data Mining - Ass4", font=32).grid(row=0, column=1, padx=10, pady=10)
@@ -68,15 +70,16 @@ class GUI(object):
 
     # command for classify button
     def __classifyClick(self):
-        if (self.__preProcess==None):
+        if (self.__classifier==None):
             error="Make Sure To Build A Classifier Before Pressing The Classify Button!"
             mb.showinfo('Path Error',error)
             return
         else:
             test = self.__preProcess.discretizeTest(self.__read.readTest())
-            self.__classifier.classifyTestFile(test)
+            self.__classifier.classifyTest(test)
 
-
+    def __on_closing(self):
+        self.__app.destroy()
 
     # start buliding the classifier
     def __beginBuild(self,path,bins):
@@ -103,10 +106,12 @@ class GUI(object):
         structure=self.__preProcess.getStructure()
 
         #create and update classifier
-        self.__classifier=Classifier.Classifier()
+        self.__classifier=Classifier.Classifier(path)
         self.__classifier.setApriorProbability(train,structure)
         self.__classifier.calcM_EstimatorProbability(train,structure,2)
 
+        message="Building classifier using train-set is done!"
+        mb.showinfo('Build Success',message)
         
 
     # check if the given variable is an integer

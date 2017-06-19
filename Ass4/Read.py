@@ -12,6 +12,7 @@ class Read(object):
         structure_file = open(self.__structurePath, "r")
         raw = structure_file.read()
         structure_file.close()
+
         structure_lines = raw.split('\n')
         structure = dict()
         for line in structure_lines:
