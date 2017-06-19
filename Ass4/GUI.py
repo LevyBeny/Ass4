@@ -13,7 +13,7 @@ class GUI(object):
 
     def __init__(self):
         self.__app=Tk()
-        self.__app.title("Ass4 Data Mining")
+        self.__app.title("Naive Bayes Classifier")
         self.__app.geometry("720x380+290+150")
 
         self.__img = Image.open('miner.png')
@@ -21,11 +21,9 @@ class GUI(object):
         self.__myvar=Label(self.__app,image = self.__tkimage)
         self.__myvar.place(x=-140, y=60, relwidth=1, relheight=1)
 
-        self.__app.protocol("WM_DELETE_WINDOW", self.__on_closing)
-
         ## Spacing - Row Zero
         self.__app.grid_rowconfigure(0, minsize=70)
-        Label(self.__app,text="Data Mining - Ass4", font=32).grid(row=0, column=1, padx=10, pady=10)
+        Label(self.__app,text="Naive Bayes Classifier", font=32).grid(row=0, column=1, padx=10, pady=10)
 
         ##  Browse Region - First Grid Row
         self.__app.grid_columnconfigure(0, minsize=180)
@@ -72,14 +70,13 @@ class GUI(object):
     def __classifyClick(self):
         if (self.__classifier==None):
             error="Make Sure To Build A Classifier Before Pressing The Classify Button!"
-            mb.showinfo('Path Error',error)
+            mb.showinfo('Naive Bayes Classifier',error)
             return
-        else:
-            test = self.__preProcess.discretizeTest(self.__read.readTest())
-            self.__classifier.classifyTest(test)
-
-    def __on_closing(self):
-        self.__app.destroy()
+        test = self.__preProcess.discretizeTest(self.__read.readTest())
+        self.__classifier.classifyTest(test)
+        message="Classify test-set is done!"
+        mb.showinfo('Naive Bayes Classifier',message)
+        sys.exit(0)
 
     # start buliding the classifier
     def __beginBuild(self,path,bins):
@@ -106,14 +103,11 @@ class GUI(object):
         structure=self.__preProcess.getStructure()
 
         #create and update classifier
-        self.__classifier=Classifier.Classifier(path)
-        self.__classifier.setApriorProbability(train,structure)
-        self.__classifier.calcM_EstimatorProbability(train,structure,2)
+        self.__classifier=Classifier.Classifier(path,train,structure,2)
 
         message="Building classifier using train-set is done!"
-        mb.showinfo('Build Success',message)
+        mb.showinfo('Naive Bayes Classifier',message)
         
-
     # check if the given variable is an integer
     def __isInt(self,s):
         try: 
@@ -134,18 +128,18 @@ class GUI(object):
         path=self.__browseTextEntry.get()
         if (path==""):
             error="Make Sure You Entered A Directory Path!"
-            mb.showinfo('Path Error',error)
+            mb.showinfo('Naive Bayes Classifier',error)
             return False;
 
         bins=self.__binsTextEntry.get()
         if (bins==""):
             error="Make Sure You Entered The Number Of Bins!"
-            mb.showinfo('Bins Error',error)
+            mb.showinfo('Naive Bayes Classifier',error)
             return False;
 
         if (not self.__checkBins(bins)):
             error="Make Sure You Entered A Positive Integer In The Bins Text Box!"
-            mb.showinfo('Bins Error',error)
+            mb.showinfo('Naive Bayes Classifier',error)
             return False;
       
         trainExists=os.path.isfile(path+"/train.csv")
@@ -165,7 +159,7 @@ class GUI(object):
                     error+="test.csv is empty!\n"
                 if(not structureEmpty):
                     error+="structure.txt is empty!\n"
-                mb.showinfo('Files Error',error)
+                mb.showinfo('Naive Bayes Classifier',error)
                 return False
         else:
             error="There Are Some Missing Files In The Given Path:\n"
@@ -175,9 +169,8 @@ class GUI(object):
                 error+="test.csv not exist!\n"
             if(not structureExists):
                 error+="structure.txt not exist!\n"
-            mb.showinfo('Files Error',error)
+            mb.showinfo('Naive Bayes Classifier',error)
             return False
-
 
 
     # starts the GUI

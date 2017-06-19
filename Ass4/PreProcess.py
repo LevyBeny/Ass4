@@ -15,7 +15,7 @@ class PreProcess(object):
             if (self.__structure[column]=='NUMERIC'):
                 train[column].fillna(train[column].mean(), inplace=True)
             else:
-                train[column].fillna((train[column]).mode()[0], inplace=True)
+                train[column].fillna(train[column].mode()[0], inplace=True)
         return train
 
     # discretize the given train set to given number of bins
@@ -32,18 +32,17 @@ class PreProcess(object):
     def discretizeTest(self,test):
         for column in self.__breakPoints.keys():
             test[column]=self.__binning(test[column],self.__breakPoints[column],self.__numOfBins)
-        print(test)
         return test
 
     def __createBreakPoints(self,col,numOfBins):
         # Define min and max values:
-        minval = col.min()
-        maxval = col.max()        
+        minval =float( col.min())
+        maxval = float(col.max())        
         interval_size=float(maxval-minval)/float(numOfBins)
 
         # Create list of break points
         cut_points=[]
-        i=minval+interval_size
+        i=float(minval+interval_size)
         for j in range(numOfBins-1):
             cut_points.append(i)
             i+=interval_size

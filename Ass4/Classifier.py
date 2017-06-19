@@ -5,33 +5,37 @@ import operator
 
 class Classifier(object):
 
-    def __init__(self,outputPath):
-        self.apriorProbDict=dict()
-        self.condProbDict=dict()
+    def __init__(self,outputPath,train,structure,m):
+        self.__apriorProbDict=dict()
+        self.__condProbDict=dict()
+        self.__classProb=dict()
+        self.__structure=structure
         self.__outputPath=outputPath
+        self.__setApriorProbability(train)
+        self.__calcM_EstimatorProbability(train,m)
 
     #Used to calculate the aprior probability for each attribute. based on uniform distribution assumption (no count made)
-    def setApriorProbability(self,train,structure):
-        self.__structure=structure
-        self.apriorProbDict=dict()
-        for attName in structure.keys():
-            self.apriorProbDict[attName]=float(1.0)/float(len(structure[attName]))
+    def __setApriorProbability(self,train):
+        self.__apriorProbDict=dict()
+        for attName in self.__structure.keys():
+            self.__apriorProbDict[attName]=float(1.0)/float(len(self.__structure[attName]))
 
     #Used to calculate for each attribute value and class value intersection the conditional probability using m-estimator
-    def calcM_EstimatorProbability(self,train,structure,m):
+    def __calcM_EstimatorProbability(self,train,m):
         classValuesCountDict=dict()
-        for classValue in structure["class"]:
-            classValuesCountDict[classValue]=len(train[train["class"]==classValue])
-
-        self.condProbDict=dict()
-        for attName in structure.keys():
+        size=len(train)
+        for classValue in self.__structure["class"]:
+            classValuesCountDict[classValue]=float(len(train[train["class"]==classValue]))
+            self.__classProb[classValue]=classValuesCountDict[classValue]/float(size)
+        self.__condProbDict=dict()
+        for attName in self.__structure.keys():
             if(attName != "class"):
-                self.condProbDict[attName]=dict()
-                for attValue in structure[attName]:
-                        self.condProbDict[attName][attValue]=dict()
-                        for classValue in structure["class"]:
-                            countIntersection=len(train[(train[attName]==attValue) & (train["class"]==classValue)])
-                            self.condProbDict[attName][attValue][classValue]=float(countIntersection+float(m*self.apriorProbDict[attName]))/float(classValuesCountDict[classValue]+m)
+                self.__condProbDict[attName]=dict()
+                for attValue in self.__structure[attName]:
+                        self.__condProbDict[attName][attValue]=dict()
+                        for classValue in self.__structure["class"]:
+                            countIntersection=float(len(train[(train[attName]==attValue) & (train["class"]==classValue)]))
+                            self.__condProbDict[attName][attValue][classValue]=float(countIntersection+m*self.__apriorProbDict[attName])/float(classValuesCountDict[classValue]+m)
     
     def classifyTest(self,test):
         self.test=test
@@ -48,11 +52,12 @@ class Classifier(object):
     def __classifyPredict(self, row,classValues):
         bayesCalc=dict()
         for classValue in classValues:
-            bayesCalc[classValue]=1.0 #value before multiplying
-        for column in self.__structure.keys():
-            if (column!="class"):
-                for classValue in classValues:              #attName #attValue    #classValue 
-                    bayesCalc[classValue]*=float(self.condProbDict[column][row[column]][classValue])
+            bayesCalc[classValue]=1.0 #value before multiplying      
+        for classValue in classValues:
+            for column in self.__structure.keys():          #attName #attValue    #classValue 
+                if (column!="class"):
+                    bayesCalc[classValue]*=float(self.__condProbDict[column][row[column]][classValue])
+            bayesCalc[classValue]*=self.__classProb[classValue]
         return max(bayesCalc.iteritems(), key=operator.itemgetter(1))[0] #get Max
 
     def get_accuracy(self):
